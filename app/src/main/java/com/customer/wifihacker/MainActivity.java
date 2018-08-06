@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -32,7 +33,7 @@ public class MainActivity extends ListActivity {
     WifiScanReceiver wifiReciever;
     ListView list;
     String wifis[];
-
+    WifiConnectedReciever mWifiConnectedReciever;
     EditText pass;
 
     @Override
@@ -43,6 +44,7 @@ public class MainActivity extends ListActivity {
         list=getListView();
         mainWifiObj = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiReciever = new WifiScanReceiver();
+        mWifiConnectedReciever = new WifiConnectedReciever();
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},100);
@@ -78,13 +80,17 @@ public class MainActivity extends ListActivity {
 
     protected void onPause() {
         unregisterReceiver(wifiReciever);
+        unregisterReceiver(mWifiConnectedReciever);
         super.onPause();
     }
 
     protected void onResume() {
         registerReceiver(wifiReciever, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        registerReceiver(mWifiConnectedReciever, new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION));
+
         super.onResume();
     }
+
 
     class WifiScanReceiver extends BroadcastReceiver {
         @SuppressLint("UseValueOf")
@@ -102,12 +108,7 @@ public class MainActivity extends ListActivity {
             int counter = 0;
             for (String eachWifi : wifis) {
                 String[] temp = eachWifi.split(",");
-
-                filtered[counter] = "SSID  = "+ temp[0].substring(5).trim()+"\n" +
-                        "BSSID = "+ temp[1].substring(6).trim()+"\n" +
-                        "KEY Management = "+ temp[2].substring(12).trim()+"\n" +
-                        "Level = "+temp[3].substring(6).trim();
-
+                filtered[counter] = temp[0].substring(5).trim() ;
                 counter++;
 
             }
@@ -118,21 +119,42 @@ public class MainActivity extends ListActivity {
     }
 
     private void finallyConnect(String networkPass, String networkSSID) {
-        WifiConfiguration wifiConfig = new WifiConfiguration();
-        wifiConfig.SSID = String.format("\"%s\"", networkSSID);
-        wifiConfig.preSharedKey = String.format("\"%s\"", networkPass);
-
-        // remember id
-        int netId = mainWifiObj.addNetwork(wifiConfig);
-        mainWifiObj.disconnect();
-        mainWifiObj.enableNetwork(netId, true);
-        mainWifiObj.reconnect();
 
         WifiConfiguration conf = new WifiConfiguration();
-        conf.SSID = "\"\"" + networkSSID + "\"\"";
+        conf.SSID = "\"" + networkSSID + "\"";
         conf.preSharedKey = "\"" + networkPass + "\"";
+
+        conf.status = WifiConfiguration.Status.ENABLED;
+        conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+        conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+        conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+        conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+        conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+
+        Log.e("wifi networkSSID",networkSSID);
+        Log.e("wifi networkPass",networkPass);
+
+        Log.e("connecting", conf.SSID + " " + conf.preSharedKey);
         mainWifiObj.addNetwork(conf);
+        Log.e("after connecting", conf.SSID + " " + conf.preSharedKey);
+
+        List<WifiConfiguration> list = mainWifiObj.getConfiguredNetworks();
+        for( WifiConfiguration i : list ) {
+
+            Log.e("i.SSID", " :: "+i.SSID);
+
+            if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
+                Log.e("i.networkId", " :: matched :: "+i.networkId);
+
+                mainWifiObj.disconnect();
+                mainWifiObj.enableNetwork(i.networkId, true);
+                mainWifiObj.reconnect();
+                Log.e("re connecting", i.SSID + " " + conf.preSharedKey);
+                break;
+            }
+        }
     }
+
 
     private void connectToWifi(final String wifiSSID) {
         final Dialog dialog = new Dialog(this);
@@ -154,5 +176,21 @@ public class MainActivity extends ListActivity {
             }
         });
         dialog.show();
+    }
+
+    private class WifiConnectedReciever extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if(action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)){
+                NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                boolean connected = info.isConnected();
+                if (connected)
+                Toast.makeText(getApplicationContext(),"SuccessFully Connected...",Toast.LENGTH_LONG).show();
+
+            }
+        }
     }
 }
