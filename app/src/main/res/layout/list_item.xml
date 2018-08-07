@@ -1,11 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--  Single List Item Design -->
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/label"
+<LinearLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dip"
-    android:textSize="16dip"
-    android:textStyle="bold"
-    android:textColor="@android:color/holo_blue_dark">
-</TextView>
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+
+ <LinearLayout
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content">
+
+
+     <TextView
+         android:text="Name : "
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:padding="10dip"
+         android:textSize="16dip"
+         android:textStyle="bold"
+         android:textColor="@android:color/holo_blue_dark">
+     </TextView>
+
+
+     <TextView
+         android:id="@+id/label"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:padding="10dip"
+         android:textSize="16dip"
+         android:textStyle="bold"
+         android:textColor="@android:color/holo_blue_dark">
+     </TextView>
+
+
+
+ </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:text="BSSID : "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textSize="16dip"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_blue_dark">
+        </TextView>
+
+
+
+        <TextView
+            android:id="@+id/bssid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textSize="16dip"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_blue_dark">
+        </TextView>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Security : "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textSize="16dip"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_blue_dark">
+        </TextView>
+
+
+        <TextView
+            android:id="@+id/securitytype"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textSize="16dip"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_blue_dark">
+        </TextView>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Range : "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textSize="16dip"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_blue_dark">
+        </TextView>
+
+
+        <TextView
+            android:id="@+id/range"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textSize="16dip"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_blue_dark">
+        </TextView>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Signal : "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textSize="16dip"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_blue_dark">
+        </TextView>
+
+
+        <TextView
+            android:id="@+id/other"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dip"
+            android:textSize="16dip"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_blue_dark">
+        </TextView>
+
+    </LinearLayout>
+
+
+
+
+
+
+
+
+
+</LinearLayout>
